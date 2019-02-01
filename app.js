@@ -1,5 +1,6 @@
 const createError = require('http-errors');
 const express = require('express');
+const expressLayouts = require('express-ejs-layouts');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -19,6 +20,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Express layouts setup
+app.use(expressLayouts);
+app.set('layout', 'layouts/layout');
+
+// Routes setup
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
