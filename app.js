@@ -3,8 +3,11 @@ const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const session = require('express-session');
 const logger = require('morgan');
 const mongoose = require('mongoose');
+const MongoStore = require('connect-mongo')(session);
+const protectedView = require('./middlewares/protectedView');
 
 
 // Set up mongoose and Mongo connection
@@ -22,8 +25,31 @@ mongoose
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const authRouter = require('./routes/auth');
 
 const app = express();
+
+// Set up user session
+
+app.use(session({
+  store: new MongoStore({
+    mongooseConnection: mongoose.connection,
+    ttl: 24 * 60 * 60, // 1 day
+  }),
+  secret: 'some-string',
+  resave: true,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000,
+  },
+}));
+
+// Set up current user middleware. Makes the currentUser available in every page
+
+app.use((req, res, next) => {
+  app.locals.currentUser = req.session.currentUser;
+  next();
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -40,8 +66,11 @@ app.use(expressLayouts);
 app.set('layout', 'layouts/layout');
 
 // Routes setup
+
+
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/users', protectedView, usersRouter);
+app.use('/', authRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
