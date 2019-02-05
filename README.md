@@ -8,6 +8,10 @@ Boilerplater for Express projects
 * Nodemon.
 * EJS.
 * ESlint Airbnb.
+* Mongoose
+* Mongo
+* Authentication and Authorization
+* Views for Sign up and Login processes
 
 ##Requirements:
 
@@ -20,3 +24,5 @@ You must have Eslint and nodemon installed globally to make use of all the funct
 2. esLINT --init (Airbnb)
 
 3. Remove the remote when cloning to make sure you get a new repo.
+
+4. Add the database and model names you will use and reuqire them in the routes.

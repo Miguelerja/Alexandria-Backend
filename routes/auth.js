@@ -10,7 +10,8 @@ const bcryptSalt = 10;
 // GET signup page
 
 router.get('/signup', (req, res, next) => {
-  res.render('auth/signup');
+  const errorMessage = req.params;
+  res.render('auth/signup', { errorMessage });
 });
 
 // POST signup/create new user
@@ -19,40 +20,33 @@ router.post('/signup', (req, res, next) => {
   const { username, password } = req.body;
   const salt = bcrypt.genSaltSync(bcryptSalt);
   const hashPass = bcrypt.hashSync(password, salt);
-
-  if (username === '' || password === '') {
+  if (User.findOne(username)) {
     res.render('auth/signup', {
-      errorMessage: 'Indicate a username and a password to sign up',
+      errorMessage: 'User already exists',
     });
-    return;
-  }
-  User.create({
-    username,
-    password: hashPass,
-  })
-    .then(() => {
-      res.redirect('/');
+  } else {
+    User.create({
+      username,
+      password: hashPass,
     })
-    .catch(next());
+      .then(() => {
+        res.redirect('/');
+      })
+      .catch(next());
+  }
 });
 
 // GET login page
 
 router.get('/login', (req, res, next) => {
-  res.render('auth/login');
+  const errorMessage = req.params;
+  res.render('auth/login', { errorMessage });
 });
 
 // POST insert login data from user
 
 router.post('/login', (req, res, next) => {
   const { username, password } = req.body;
-
-  if (username === '' || password === '') {
-    res.render('auth/login', {
-      errorMessage: 'Indicate a username and a password to sign up'
-    });
-    return;
-  }
 
   User.findOne({ username })
     .then((user) => {
@@ -68,7 +62,7 @@ router.post('/login', (req, res, next) => {
         res.redirect('/');
       } else {
         res.render('auth/login', {
-          errorMessage: 'Incorrect password'
+          errorMessage: 'Incorrect password',
         });
       }
     })

@@ -13,7 +13,7 @@ const protectedView = require('./middlewares/protectedView');
 // Set up mongoose and Mongo connection
 
 mongoose
-  .connect('mongodb://localhost/DATABASE NAME', { useNewUrlParser: true })
+  .connect('mongodb://localhost/XXXXXXXXXXXXX', { useNewUrlParser: true })
   .then((x) => {
     console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`);
   })
