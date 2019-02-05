@@ -4,6 +4,21 @@ const expressLayouts = require('express-ejs-layouts');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const mongoose = require('mongoose');
+
+
+// Set up mongoose and Mongo connection
+
+mongoose
+  .connect('mongodb://localhost/DATABASE NAME', { useNewUrlParser: true })
+  .then((x) => {
+    console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`);
+  })
+  .catch((err) => {
+    console.error('Error connecting to mongo', err);
+  });
+
+// Connect routers
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
