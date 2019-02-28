@@ -25,10 +25,10 @@ mongoose.connect(process.env.DB_URL, {
 
 
 const app = express();
-
+console.log(process.env.PUBLIC_DOMAIN);
 app.use(cors({
   credentials: true,
-  origin: [process.env.PUBLIC_DOMAIN]
+  origin: [process.env.PUBLIC_DOMAIN],
 }));
 // app.use((req, res, next) => {
 //   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
