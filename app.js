@@ -13,7 +13,7 @@ require('dotenv').config();
 
 const auth = require('./routes/auth');
 
-mongoose.connect(process.env.MONGODB_URL, {
+mongoose.connect(process.env.DB_URL, {
   keepAlive: true,
   useNewUrlParser: true,
   reconnectTries: Number.MAX_VALUE,
