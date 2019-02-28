@@ -13,7 +13,7 @@ const bookSchema = new Schema({
   },
   status: {
     type: String,
-    required: true,
+    default: 'free',
   },
   clue: {
     type: String,
@@ -26,6 +26,10 @@ const bookSchema = new Schema({
   coordinates: {
     type: Array,
     required: true,
+  },
+  hidden: {
+    type: Boolean,
+    default: false,
   },
   historyCoordinates: Array,
 }, { timestamps: true });

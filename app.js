@@ -12,6 +12,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const auth = require('./routes/auth');
+const books = require('./routes/books');
 
 mongoose.connect(process.env.DB_URL, {
   keepAlive: true,
@@ -28,7 +29,7 @@ const app = express();
 
 app.use(cors({
   credentials: true,
-  origin: [process.env.PUBLIC_DOMAIN]
+  origin: [process.env.PUBLIC_DOMAIN],
 }));
 // app.use((req, res, next) => {
 //   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
@@ -58,6 +59,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/auth', auth);
+app.use('/alexandria', books);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
