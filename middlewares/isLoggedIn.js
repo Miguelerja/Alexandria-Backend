@@ -1,4 +1,4 @@
-const isLoggedIn = (req, res, next) => {
+exports.isLoggedIn = () => (req, res, next) => {
   if (req.session.currentUser) {
     next();
   } else {
@@ -8,5 +8,3 @@ const isLoggedIn = (req, res, next) => {
     next(err);
   }
 };
-
-module.exports = isLoggedIn;

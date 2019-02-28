@@ -18,7 +18,11 @@ const bookSchema = new Schema({
   clue: {
     type: String,
     required: true,
-  },  
+  },
+  strikes: {
+    type: Number,
+    default: 0,
+  },
   coordinates: {
     type: Array,
     required: true,
