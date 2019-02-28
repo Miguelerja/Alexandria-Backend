@@ -38,9 +38,9 @@ router.post('/book', (req, res) => {
       error,
     });
   });
-});
+}); // TODO transaction routes
 
-// PUT Modify existing book (strike)
+// PUT Modify existing book
 
 router.put('/book/:id', (req, res) => {
   const { id } = req.params;
