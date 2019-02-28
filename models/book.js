@@ -2,27 +2,30 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
 
-const userSchema = new Schema({
-  username: {
+const bookSchema = new Schema({
+  code: {
     type: String,
-    required: true,
     unique: true,
   },
-  password: {
+  info: {
+    type: Object,
+    required: true,
+  },
+  status: {
     type: String,
     required: true,
   },
-  email: {
+  clue: {
     type: String,
     required: true,
-    unique: true,
-  },
-  location: {
+  },  
+  coordinates: {
     type: Array,
     required: true,
   },
+  historyCoordinates: Array,
 }, { timestamps: true });
 
-const User = mongoose.model('User', userSchema);
+const Book = mongoose.model('Book', bookSchema);
 
-module.exports = User;
+module.exports = Book;
