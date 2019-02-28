@@ -9,7 +9,7 @@ const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo')(session);
 const protectedView = require('./middlewares/protectedView');
 
-
+ 
 // Set up mongoose and Mongo connection
 
 mongoose
