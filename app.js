@@ -1,33 +1,42 @@
-const createError = require('http-errors');
+
 const express = require('express');
 const path = require('path');
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
+const favicon = require('serve-favicon');
 const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
-const protectedView = require('./middlewares/protectedView');
+const cors = require('cors');
 require('dotenv').config();
 
-// Set up mongoose and Mongo connection
+const auth = require('./routes/auth');
 
-mongoose
-  .connect(process.env.DB_URL, { useNewUrlParser: true })
-  .then((x) => {
-    console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`);
-  })
-  .catch((err) => {
-    console.error('Error connecting to mongo', err);
-  });
+mongoose.connect(process.env.MONGODB_URL, {
+  keepAlive: true,
+  useNewUrlParser: true,
+  reconnectTries: Number.MAX_VALUE,
+}).then(() => {
+  console.log('Connected to database');
+}).catch((error) => {
+  console.error(error);
+});
 
-// Connect routers
-
-const usersRouter = require('./routes/users');
-const authRouter = require('./routes/auth');
 
 const app = express();
 
-// Set up user session
+app.use(cors({
+  credentials: true,
+  origin: [process.env.PUBLIC_DOMAIN]
+}));
+// app.use((req, res, next) => {
+//   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+//   res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,OPTIONS,DELETE');
+//   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+//   res.setHeader('Access-Control-Allow-Credentials', true);
+//   next();
+// });
 
 app.use(session({
   store: new MongoStore({
@@ -39,43 +48,30 @@ app.use(session({
   saveUninitialized: true,
   cookie: {
     maxAge: 24 * 60 * 60 * 1000,
-  },
+  }
 }));
 
-// Set up current user middleware. Makes the currentUser available in every page
-
-app.use((req, res, next) => {
-  app.locals.currentUser = req.session.currentUser;
-  next();
-});
-
-// view engine setup
-
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes setup
-
-app.use('/users', protectedView, usersRouter);
-app.use('/', authRouter);
+app.use('/auth', auth);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
-  next(createError(404));
+  res.status(404).json({ code: 'not found' });
 });
 
-// error handler
 app.use((err, req, res, next) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  // always log the error
+  console.error('ERROR', req.method, req.path, err);
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  // only render if the error ocurred before sending the response
+  if (!res.headersSent) {
+    res.status(500).json({ code: 'unexpected' });
+  }
 });
 
 module.exports = app;

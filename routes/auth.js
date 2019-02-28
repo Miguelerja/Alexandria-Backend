@@ -1,97 +1,103 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
 
 const router = express.Router();
+const bcrypt = require('bcrypt');
+
 const User = require('../models/user');
 
-// BCrypt to encrypt passwords
-const bcryptSalt = 10;
+const { isLoggedIn } = require('../middlewares/isLoggedIn');
 
-// GET signup page
-
-router.get('/signup', (req, res, next) => {
-  const errorMessage = undefined;
-  res.render('auth/signup', { errorMessage });
-});
-
-// POST signup/create new user
-
-router.post('/signup', (req, res, next) => {
-  const { username, password } = req.body;
-  const salt = bcrypt.genSaltSync(bcryptSalt);
-  const hashPass = bcrypt.hashSync(password, salt);
-
-  // Control the user inserts values
-  if (username === '' || password === '') {
-    res.render('auth/signup', {
-      errorMessage: 'Indicate a username and a password to sign up',
-    });
-    return;
-  }
-
-  if (User.findOne(username)) {
-    res.render('auth/signup', {
-      errorMessage: 'User already exists',
-    });
+router.get('/me', (req, res, next) => {
+  if (req.session.currentUser) {
+    res.json(req.session.currentUser);
   } else {
-    User.create({
-      username,
-      password: hashPass,
-    })
-      .then(() => {
-        res.redirect('/');
-      })
-      .catch(next());
+    res.status(404).json({
+      error: 'not-found',
+    });
   }
 });
-
-// GET login page
-
-router.get('/login', (req, res, next) => {
-  const errorMessage = undefined;
-  res.render('auth/login', { errorMessage });
-});
-
-// POST insert login data from user
 
 router.post('/login', (req, res, next) => {
-  const { username, password } = req.body;
-
-  // Control the user inserts values
-  if (username === '' || password === '') {
-    res.render('auth/signup', {
-      errorMessage: 'Indicate a username and a password to sign up',
+  if (req.session.currentUser) {
+    return res.status(401).json({
+      error: 'unauthorized',
     });
-    return;
   }
 
-  User.findOne({ username })
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(422).json({
+      error: 'validation',
+    });
+  }
+
+  User.findOne({
+    username,
+  })
     .then((user) => {
       if (!user) {
-        res.render('auth/login', {
-          errorMessage: 'The username doesn\'t exist',
+        return res.status(404).json({
+          error: 'not-found'
         });
-        return;
       }
       if (bcrypt.compareSync(password, user.password)) {
-        // Save the login in the session!
         req.session.currentUser = user;
-        res.redirect('/');
-      } else {
-        res.render('auth/login', {
-          errorMessage: 'Incorrect password',
-        });
+        return res.status(200).json(user);
       }
+      return res.status(404).json({
+        error: 'not-found',
+      });
     })
     .catch(next);
 });
 
-// GET logout from session
+router.post('/signup', (req, res, next) => {
+  const {
+    username,
+    password,
+  } = req.body;
 
-router.get('/logout', (req, res, next) => {
-  req.session.destroy(() => {
-    // cannot access session here
-    res.redirect('/login');
+  if (!username || !password) {
+    return res.status(422).json({
+      error: 'empty',
+    });
+  }
+
+  User.findOne({
+    username,
+  }, 'username')
+    .then((userExists) => {
+      if (userExists) {
+        return res.status(422).json({
+          error: 'username-not-unique',
+        });
+      }
+
+      const salt = bcrypt.genSaltSync(10);
+      const hashPass = bcrypt.hashSync(password, salt);
+
+      const newUser = User({
+        username,
+        password: hashPass,
+      });
+
+      return newUser.save().then(() => {
+        req.session.currentUser = newUser;
+        res.json(newUser);
+      });
+    })
+    .catch(next);
+});
+
+router.post('/logout', (req, res) => {
+  req.session.destroy()
+  return res.status(204).send();
+});
+
+router.get('/private', isLoggedIn(), (req, res, next) => {
+  res.status(200).json({
+    message: 'This is a private message',
   });
 });
 
