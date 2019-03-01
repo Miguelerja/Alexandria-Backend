@@ -21,13 +21,13 @@ router.get('/', (req, res) => {
 // POST Create new book
 
 router.post('/book', (req, res) => {
-  const { info, clue, coordinates } = req.body;
-  const code = `Alexandria${coordinates[0]}${info.author}`;
+  const { info, clue, location } = req.body;
+  const code = `Alexandria${location.coordinates[0]}${info.author}`;
   Book.create({
     code,
     info,
     clue,
-    coordinates,
+    location,
   }).then((newBook) => {
     res.status(200);
     res.json({

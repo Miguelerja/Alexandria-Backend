@@ -23,9 +23,11 @@ const bookSchema = new Schema({
     type: Number,
     default: 0,
   },
-  coordinates: {
-    type: Array,
-    required: true,
+  location: {
+    type: {
+      type: String,
+    },
+    coordinates: [Number],
   },
   hidden: {
     type: Boolean,
@@ -37,3 +39,9 @@ const bookSchema = new Schema({
 const Book = mongoose.model('Book', bookSchema);
 
 module.exports = Book;
+
+
+// location = {
+//   type: "Point",
+//   coordinates: [lng, lat]
+// }
