@@ -22,7 +22,9 @@ router.get('/', (req, res) => {
 
 router.post('/book', (req, res) => {
   const { info, clue, coordinates } = req.body;
+  const code = `Alexandria${coordinates[0]}${info.author}`;
   Book.create({
+    code,
     info,
     clue,
     coordinates,

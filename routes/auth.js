@@ -38,7 +38,7 @@ router.post('/login', (req, res, next) => {
     .then((user) => {
       if (!user) {
         return res.status(404).json({
-          error: 'not-found'
+          error: 'not-found',
         });
       }
       if (bcrypt.compareSync(password, user.password)) {
