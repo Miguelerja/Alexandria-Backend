@@ -6,16 +6,30 @@ const Book = require('../models/book');
 // GET Get list of books
 
 router.get('/', (req, res) => {
-  Book.find({})
-    .then((products) => {
-      res.status(200).json(products);
-    })
-    .catch((error) => {
-      res.status(500);
-      res.json({
-        error,
+  if (Object.keys(req.query).length === 0) {
+    Book.find({})
+      .then((books) => {
+        res.status(200).json(books);
+      })
+      .catch((error) => {
+        res.status(500);
+        res.json({
+          error,
+        });
       });
-    });
+  } else {
+    const { title, author } = req.query;
+    Book.findOne({ 'info.title': title, 'info.author': author })
+      .then((book) => {
+        res.status(200).json(book);
+      })
+      .catch((error) => {
+        res.status(500);
+        res.json({
+          error,
+        });
+      });
+  }
 });
 
 // POST Create new book
