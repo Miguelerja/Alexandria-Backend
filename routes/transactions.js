@@ -23,7 +23,7 @@ router.get('/', (req, res) => {
 // POST Create new transaction
 
 router.post('/new', (req, res) => {
-  const { userThatFrees, bookId } = req.body;
+  const { bookId, userThatFrees } = req.body;
   Transaction.create({
     bookId,
     userThatFrees,

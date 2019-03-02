@@ -5,19 +5,16 @@ const { ObjectId } = Schema.Types;
 
 const transactionSchema = new Schema({
   bookId: {
-    type: ObjectId,
-    reference: 'book',
+    type: String,
     required: true,
   },
   userThatFrees: {
-    type: ObjectId,
-    reference: 'user',
+    type: String,
     required: true,
   },
   userThatHunts: {
     type: ObjectId,
     reference: 'user',
-    required: true,
   },
 }, { timestamps: true });
 
