@@ -18,8 +18,8 @@ router.get('/', (req, res) => {
         });
       });
   } else {
-    const { title, author } = req.query;
-    Book.findOne({ 'info.title': title, 'info.author': author })
+    const { clue } = req.query;
+    Book.findOne(clue)
       .then((book) => {
         res.status(200).json(book);
       })
@@ -54,7 +54,7 @@ router.post('/book', (req, res) => {
       error,
     });
   });
-}); // TODO transaction routes
+});
 
 // PUT Modify existing book
 

@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
 
-const bookSchema = new Schema({
+const transactionSchema = new Schema({
   bookId: {
     type: ObjectId,
     reference: 'book',
@@ -21,6 +21,6 @@ const bookSchema = new Schema({
   },
 }, { timestamps: true });
 
-const Book = mongoose.model('Book', bookSchema);
+const Transaction = mongoose.model('Transaction', transactionSchema);
 
-module.exports = Book;
+module.exports = Transaction;
