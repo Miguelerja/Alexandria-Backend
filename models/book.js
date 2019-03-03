@@ -33,7 +33,6 @@ const bookSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  historyCoordinates: Array,
 }, { timestamps: true });
 
 const Book = mongoose.model('Book', bookSchema);

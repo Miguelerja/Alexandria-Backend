@@ -12,6 +12,13 @@ const transactionSchema = new Schema({
     type: String,
     required: true,
   },
+  location: {
+    type: {
+      type: String,
+    },
+    coordinates: [Number],
+  },
+  story: String,
   userThatHunts: {
     type: ObjectId,
     reference: 'user',

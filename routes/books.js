@@ -93,6 +93,7 @@ router.put('/bookCode/:code', (req, res) => {
     .then((book) => {
       book.hidden = true;
       book.status = 'captured';
+      
       return book.save();
     }).then((updatedBook) => {
       res.status(200);

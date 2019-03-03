@@ -23,10 +23,12 @@ router.get('/', (req, res) => {
 // POST Create new transaction
 
 router.post('/new', (req, res) => {
-  const { bookId, userThatFrees } = req.body;
+  const { bookId, userThatFrees, location, story } = req.body;
   Transaction.create({
     bookId,
     userThatFrees,
+    location,
+    story,
   }).then((newTransaction) => {
     res.status(200);
     res.json({
@@ -43,10 +45,14 @@ router.post('/new', (req, res) => {
 
 // PUT update transaction
 
-router.put('/transaction/:id', (req, res) => {
-  const { id } = req.params;
-  Transaction.findById(id)
+router.put('/:bookId', (req, res) => {
+  const { bookId } = req.params;
+  const { userThatHunts } = req.body;
+  console.log('this is bookcode', bookId);
+  console.log('hunter', userThatHunts)
+  Transaction.findOne({ bookId })
     .then((transaction) => {
+      transaction.userThatHunts = userThatHunts;
       return transaction.save();
     }).then((updatedTransaction) => {
       res.status(200);
