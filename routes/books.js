@@ -7,7 +7,7 @@ const Book = require('../models/book');
 
 router.get('/', (req, res) => {
   if (Object.keys(req.query).length === 0) {
-    Book.find({})
+    Book.find({ hidden: false })
       .then((books) => {
         res.status(200).json(books);
       })
@@ -56,7 +56,7 @@ router.post('/book', (req, res) => {
   });
 });
 
-// PUT Modify existing book
+// PUT Modify strikes
 
 router.put('/book/:id', (req, res) => {
   const { id } = req.params;
@@ -65,9 +65,34 @@ router.put('/book/:id', (req, res) => {
       if (book.strikes < 2) {
         book.strikes += 1;
       } else {
-        boook.strikes += 1;
+        book.strikes += 1;
         book.hidden = true;
+        book.status = 'lost';
       }
+      return book.save();
+    }).then((updatedBook) => {
+      res.status(200);
+      res.json({
+        status: 'updated',
+        response: updatedBook,
+      });
+    }).catch((error) => {
+      res.status(500);
+      res.json({
+        error,
+      });
+    });
+});
+
+// PUT Capture book
+
+router.put('/bookCode/:code', (req, res) => {
+  const { code } = req.params;
+  console.log(code);
+  Book.findOne({ code })
+    .then((book) => {
+      book.hidden = true;
+      book.status = 'captured';
       return book.save();
     }).then((updatedBook) => {
       res.status(200);
