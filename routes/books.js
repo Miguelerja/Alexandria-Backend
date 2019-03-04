@@ -86,9 +86,8 @@ router.put('/book/:id', (req, res) => {
 
 // PUT Capture book
 
-router.put('/bookCode/:code', (req, res) => {
-  const { code } = req.params;
-  console.log(code);
+router.put('/bookCode/:id', (req, res) => {
+  const { code } = req.body;
   Book.findOne({ code })
     .then((book) => {
       book.hidden = true;
