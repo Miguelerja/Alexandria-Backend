@@ -87,7 +87,7 @@ router.post('/signup', (req, res, next) => {
         res.json(newUser);
       });
     })
-    .catch(next);
+    .catch(error => console.log(error));
 });
 
 router.post('/logout', (req, res) => {
