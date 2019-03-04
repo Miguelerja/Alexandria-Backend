@@ -48,8 +48,6 @@ router.post('/new', (req, res) => {
 router.put('/:bookId', (req, res) => {
   const { bookId } = req.params;
   const { userThatHunts } = req.body;
-  console.log('this is bookcode', bookId);
-  console.log('hunter', userThatHunts)
   Transaction.findOne({ bookId })
     .then((transaction) => {
       transaction.userThatHunts = userThatHunts;
