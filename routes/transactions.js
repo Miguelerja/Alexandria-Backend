@@ -18,8 +18,8 @@ router.get('/', (req, res) => {
         });
       });
   } else {
-    const { bookId } = req.query;
-    Transaction.find({ bookId })
+    const { userThatHunts, bookId } = req.query;
+    Transaction.find({ $or: [{ userThatHunts }, { bookId }] })
       .then((transactions) => {
         res.status(200).json(transactions);
       })
