@@ -4,6 +4,7 @@ const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
 
 const transactionSchema = new Schema({
+  bookTitle: String,
   bookId: {
     type: String,
     required: true,

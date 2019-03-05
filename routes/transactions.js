@@ -19,10 +19,8 @@ router.get('/', (req, res) => {
       });
   } else {
     const { bookId } = req.query;
-    console.log('backend query', req.query);
     Transaction.find({ bookId })
       .then((transactions) => {
-        console.log('transactions backend', transactions);
         res.status(200).json(transactions);
       })
       .catch((error) => {
@@ -37,8 +35,9 @@ router.get('/', (req, res) => {
 // POST Create new transaction
 
 router.post('/new', (req, res) => {
-  const { bookId, userThatFrees, location, story } = req.body;
+  const { bookTitle, bookId, userThatFrees, location, story } = req.body;
   Transaction.create({
+    bookTitle,
     bookId,
     userThatFrees,
     location,
