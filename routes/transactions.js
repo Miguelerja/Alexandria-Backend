@@ -17,6 +17,20 @@ router.get('/', (req, res) => {
           error,
         });
       });
+  } else {
+    const { bookId } = req.query;
+    console.log('backend query', req.query);
+    Transaction.find({ bookId })
+      .then((transactions) => {
+        console.log('transactions backend', transactions);
+        res.status(200).json(transactions);
+      })
+      .catch((error) => {
+        res.status(500);
+        res.json({
+          error,
+        });
+      });
   }
 });
 
