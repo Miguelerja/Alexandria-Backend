@@ -108,4 +108,39 @@ router.put('/bookCode/:id', (req, res) => {
     });
 });
 
+// PUT set free a book
+
+router.put('/freeBook', (req, res) => { 
+  console.log(req.body)
+  const {
+    code,
+    location,
+    clue,
+    info,
+  } = req.body;
+
+  Book.findOne({ code })
+    .then((book) => {
+      book.hidden = false;
+      book.status = 'free';
+      book.location = location;
+      book.info.story = info.story;
+      book.clue = clue;
+      book.strikes = 0;
+
+      return book.save();
+    }).then((updatedBook) => {
+      res.status(200);
+      res.json({
+        status: 'updated',
+        response: updatedBook,
+      });
+    }).catch((error) => {
+      res.status(500);
+      res.json({
+        error,
+      });
+    });
+});
+
 module.exports = router;
