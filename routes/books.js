@@ -111,7 +111,6 @@ router.put('/bookCode/:id', (req, res) => {
 // PUT set free a book
 
 router.put('/freeBook', (req, res) => { 
-  console.log(req.body)
   const {
     code,
     location,
